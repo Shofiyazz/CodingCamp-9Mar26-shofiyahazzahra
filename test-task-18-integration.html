@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 18.1 Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+        }
+        .pass {
+            color: green;
+            font-weight: bold;
+        }
+        .fail {
+            color: red;
+            font-weight: bold;
+        }
+        .theme-light {
+            background-color: #ffffff;
+            color: #333333;
+        }
+        .theme-dark {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .result-item {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+            background-color: #f5f5f5;
+        }
+        .theme-dark .result-item {
+            background-color: #2a2a2a;
+        }
+    </style>
+</head>
+<body>
+    <h1>Task 18.1 Integration Test</h1>
+    <p>This test verifies that the init() function properly initializes the theme settings component before other components.</p>
+
+    <div class="test-section">
+        <h3>Test Setup</h3>
+        <p>The test will:</p>
+        <ol>
+            <li>Check if initThemeSettings() is called during init()</li>
+            <li>Verify theme is applied before other components initialize</li>
+            <li>Test that all components work together correctly</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h3>Manual Verification Steps</h3>
+        <ol>
+            <li>Open the main index.html file</li>
+            <li>Check that the theme toggle button appears</li>
+            <li>Click the theme toggle button to switch between light and dark mode</li>
+            <li>Verify that the theme persists after page reload</li>
+            <li>Verify that all other components (time, timer, tasks, links) work correctly in both themes</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h3>Automated Test Results</h3>
+        <div id="results"></div>
+    </div>
+
+    <script type="module">
+        const results = document.getElementById('results');
+
+        function addResult(testName, passed, message) {
+            const div = document.createElement('div');
+            div.className = 'result-item';
+            div.innerHTML = `
+                <span class="${passed ? 'pass' : 'fail'}">${passed ? '✓' : '✗'}</span>
+                <strong>${testName}:</strong> ${message}
+            `;
+            results.appendChild(div);
+        }
+
+        // Test 1: Check if init function exists
+        try {
+            const scriptContent = await fetch('js/app.js').then(r => r.text());
+            const hasInitFunction = scriptContent.includes('function init()');
+            addResult('Init function exists', hasInitFunction, 
+                hasInitFunction ? 'init() function found in app.js' : 'init() function not found');
+
+            // Test 2: Check if initThemeSettings is called in init
+            const callsInitTheme = scriptContent.includes('initThemeSettings()');
+            addResult('Calls initThemeSettings', callsInitTheme,
+                callsInitTheme ? 'initThemeSettings() is called in init()' : 'initThemeSettings() is not called');
+
+            // Test 3: Check initialization order
+            const initFunctionMatch = scriptContent.match(/function init\(\) \{[\s\S]*?\n\}/);
+            if (initFunctionMatch) {
+                const initBody = initFunctionMatch[0];
+                const themeIndex = initBody.indexOf('initThemeSettings()');
+                const timeIndex = initBody.indexOf('initTimeGreeting()');
+                const timerIndex = initBody.indexOf('initFocusTimer()');
+                const tasksIndex = initBody.indexOf('initTaskList()');
+                const linksIndex = initBody.indexOf('initQuickLinks()');
+
+                const correctOrder = themeIndex < timeIndex && 
+                                   themeIndex < timerIndex && 
+                                   themeIndex < tasksIndex && 
+                                   themeIndex < linksIndex;
+
+                addResult('Theme initialized first', correctOrder,
+                    correctOrder ? 'Theme is initialized before other components' : 'Theme is not initialized first');
+            }
+
+            // Test 4: Check if theme is applied immediately
+            const hasApplyTheme = scriptContent.includes('applyTheme(savedTheme)');
+            addResult('Theme applied immediately', hasApplyTheme,
+                hasApplyTheme ? 'Theme is applied immediately in initThemeSettings()' : 'Theme may not be applied immediately');
+
+            // Test 5: Check comment about preventing flash
+            const hasFlashComment = scriptContent.includes('prevent flash') || scriptContent.includes('prevent visual flash');
+            addResult('Flash prevention documented', hasFlashComment,
+                hasFlashComment ? 'Code includes comment about preventing flash' : 'No comment about flash prevention');
+
+        } catch (error) {
+            addResult('Test execution', false, `Error: ${error.message}`);
+        }
+    </script>
+</body>
+</html>

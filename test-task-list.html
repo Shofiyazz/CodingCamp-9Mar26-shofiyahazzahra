@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List Data Layer Test</title>
+</head>
+<body>
+    <h1>Task List Data Layer Test</h1>
+    <div id="output"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        const output = document.getElementById('output');
+        const results = [];
+
+        function log(message, success = true) {
+            results.push(`<p style="color: ${success ? 'green' : 'red'}">${success ? '✓' : '✗'} ${message}</p>`);
+        }
+
+        // Test 1: Generate Task ID
+        const id1 = generateTaskId();
+        const id2 = generateTaskId();
+        log(`Generated unique IDs: ${id1 !== id2}`, id1 !== id2);
+
+        // Test 2: Validate Task Text
+        log(`Valid text accepted: ${validateTaskText('Valid task')}`, validateTaskText('Valid task'));
+        log(`Empty text rejected: ${!validateTaskText('')}`, !validateTaskText(''));
+        log(`Whitespace-only rejected: ${!validateTaskText('   ')}`, !validateTaskText('   '));
+        log(`Long text (501 chars) rejected: ${!validateTaskText('a'.repeat(501))}`, !validateTaskText('a'.repeat(501)));
+        log(`Max text (500 chars) accepted: ${validateTaskText('a'.repeat(500))}`, validateTaskText('a'.repeat(500)));
+
+        // Test 3: Add Task
+        const task1 = addTask('Buy groceries');
+        log(`Task added successfully: ${task1 !== null}`, task1 !== null);
+        log(`Task has correct text: ${task1.text === 'Buy groceries'}`, task1.text === 'Buy groceries');
+        log(`Task is not completed: ${task1.completed === false}`, task1.completed === false);
+        log(`Task has ID: ${task1.id !== undefined}`, task1.id !== undefined);
+        log(`Task has createdAt: ${task1.createdAt !== undefined}`, task1.createdAt !== undefined);
+
+        // Test 4: Add Task with whitespace
+        const task2 = addTask('  Task with spaces  ');
+        log(`Task text trimmed: ${task2.text === 'Task with spaces'}`, task2.text === 'Task with spaces');
+
+        // Test 5: Add invalid task
+        const invalidTask = addTask('');
+        log(`Invalid task rejected: ${invalidTask === null}`, invalidTask === null);
+
+        // Test 6: Edit Task
+        const editResult = editTask(task1.id, 'Updated groceries');
+        log(`Task edited successfully: ${editResult === true}`, editResult === true);
+        log(`Task text updated: ${task1.text === 'Updated groceries'}`, task1.text === 'Updated groceries');
+
+        // Test 7: Edit with invalid text
+        const invalidEdit = editTask(task1.id, '');
+        log(`Invalid edit rejected: ${invalidEdit === false}`, invalidEdit === false);
+        log(`Task text unchanged: ${task1.text === 'Updated groceries'}`, task1.text === 'Updated groceries');
+
+        // Test 8: Toggle Task Complete
+        const toggleResult1 = toggleTaskComplete(task1.id);
+        log(`Task toggled to complete: ${task1.completed === true}`, task1.completed === true);
+
+        const toggleResult2 = toggleTaskComplete(task1.id);
+        log(`Task toggled back to incomplete: ${task1.completed === false}`, task1.completed === false);
+
+        // Test 9: Delete Task
+        const task3 = addTask('Task to delete');
+        const taskCount = tasks.length;
+        const deleteResult = deleteTask(task3.id);
+        log(`Task deleted successfully: ${deleteResult === true}`, deleteResult === true);
+        log(`Task removed from array: ${tasks.length === taskCount - 1}`, tasks.length === taskCount - 1);
+
+        // Test 10: Task order preservation
+        tasks.length = 0; // Clear tasks
+        const orderTask1 = addTask('First');
+        const orderTask2 = addTask('Second');
+        const orderTask3 = addTask('Third');
+        log(`Tasks in creation order: ${tasks[0] === orderTask1 && tasks[1] === orderTask2 && tasks[2] === orderTask3}`, 
+            tasks[0] === orderTask1 && tasks[1] === orderTask2 && tasks[2] === orderTask3);
+
+        // Display results
+        output.innerHTML = results.join('');
+        
+        const allPassed = results.every(r => r.includes('green'));
+        if (allPassed) {
+            output.innerHTML += '<h2 style="color: green;">All tests passed! ✓</h2>';
+        } else {
+            output.innerHTML += '<h2 style="color: red;">Some tests failed! ✗</h2>';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Settings Test</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .test-container {
+            padding: 20px;
+            margin: 20px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            background: var(--color-bg-card);
+        }
+        .test-info {
+            margin: 10px 0;
+            padding: 10px;
+            background: var(--color-bg-item);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle-container">
+        <button id="theme-toggle" aria-label="Toggle theme">
+            <span class="theme-icon">🌙</span>
+        </button>
+    </div>
+
+    <div class="test-container">
+        <h1>Theme Settings Test</h1>
+        <p>Click the theme toggle button in the top-right corner to switch between light and dark themes.</p>
+        
+        <div class="test-info">
+            <h2>Current Theme</h2>
+            <p id="current-theme">Loading...</p>
+        </div>
+
+        <div class="test-info">
+            <h2>Body Classes</h2>
+            <p id="body-classes">Loading...</p>
+        </div>
+
+        <div class="test-info">
+            <h2>LocalStorage Value</h2>
+            <p id="storage-value">Loading...</p>
+        </div>
+
+        <div class="test-info">
+            <h2>Test Elements</h2>
+            <input type="text" placeholder="Test input field" style="width: 100%; padding: 10px; margin: 10px 0;">
+            <button style="padding: 10px 20px; margin: 5px;">Test Button</button>
+            <div style="padding: 15px; margin: 10px 0; border: 1px solid var(--color-border); border-radius: 4px;">
+                Test card element with border
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Update display after theme changes
+        function updateDisplay() {
+            const currentThemeEl = document.getElementById('current-theme');
+            const bodyClassesEl = document.getElementById('body-classes');
+            const storageValueEl = document.getElementById('storage-value');
+
+            if (currentThemeEl) {
+                currentThemeEl.textContent = window.themeState ? window.themeState.currentTheme : 'Unknown';
+            }
+
+            if (bodyClassesEl) {
+                bodyClassesEl.textContent = document.body.className || '(no classes)';
+            }
+
+            if (storageValueEl) {
+                const stored = localStorage.getItem('productivity_theme');
+                storageValueEl.textContent = stored || '(not set)';
+            }
+        }
+
+        // Expose themeState for testing
+        if (typeof module !== 'undefined' && module.exports) {
+            // In Node environment
+        } else {
+            // In browser environment - expose for testing
+            const script = document.createElement('script');
+            script.textContent = `
+                // Make themeState accessible for testing
+                window.themeState = (function() {
+                    const appModule = {};
+                    try {
+                        // Try to access the module exports if available
+                        if (typeof module !== 'undefined' && module.exports) {
+                            return module.exports.themeState;
+                        }
+                    } catch (e) {}
+                    // Fallback: create a proxy to track theme
+                    return { currentTheme: 'light' };
+                })();
+            `;
+        }
+
+        // Update display initially and after each change
+        setTimeout(updateDisplay, 100);
+        
+        // Listen for theme toggle clicks
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                setTimeout(updateDisplay, 50);
+            });
+        }
+
+        // Update display every second to catch any changes
+        setInterval(updateDisplay, 1000);
+    </script>
+</body>
+</html>

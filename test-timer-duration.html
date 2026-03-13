@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer Duration Test</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .pass {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .fail {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>Timer Duration Customization Test</h1>
+    
+    <div class="test-section">
+        <h2>Focus Timer Component</h2>
+        <section class="focus-timer">
+            <h2>Focus Timer</h2>
+            <div id="timer-display">25:00</div>
+            <div class="timer-controls">
+                <select id="timer-duration">
+                    <option value="1">1 min</option>
+                    <option value="5">5 min</option>
+                    <option value="10">10 min</option>
+                    <option value="15">15 min</option>
+                    <option value="20">20 min</option>
+                    <option value="25" selected>25 min</option>
+                    <option value="30">30 min</option>
+                    <option value="45">45 min</option>
+                    <option value="60">60 min</option>
+                </select>
+                <button id="timer-start">Start</button>
+                <button id="timer-stop">Stop</button>
+                <button id="timer-reset">Reset</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="test-results"></div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const resultsDiv = document.getElementById('test-results');
+            
+            function addResult(testName, passed, message) {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `test-result ${passed ? 'pass' : 'fail'}`;
+                resultDiv.textContent = `${passed ? '✓' : '✗'} ${testName}: ${message}`;
+                resultsDiv.appendChild(resultDiv);
+            }
+
+            // Test 1: Check if customDuration property exists
+            addResult(
+                'Timer State has customDuration',
+                typeof timerState.customDuration === 'number',
+                `customDuration = ${timerState.customDuration}`
+            );
+
+            // Test 2: Check if duration functions exist
+            addResult(
+                'saveDurationPreference function exists',
+                typeof saveDurationPreference === 'function',
+                'Function is defined'
+            );
+
+            addResult(
+                'loadDurationPreference function exists',
+                typeof loadDurationPreference === 'function',
+                'Function is defined'
+            );
+
+            addResult(
+                'setTimerDuration function exists',
+                typeof setTimerDuration === 'function',
+                'Function is defined'
+            );
+
+            // Test 3: Check if duration select element exists
+            const durationSelect = document.getElementById('timer-duration');
+            addResult(
+                'Duration select element exists',
+                durationSelect !== null,
+                durationSelect ? 'Element found' : 'Element not found'
+            );
+
+            // Test 4: Test setTimerDuration with valid duration
+            const result1 = setTimerDuration(10);
+            addResult(
+                'setTimerDuration(10) returns true',
+                result1 === true,
+                `Returned ${result1}, timer shows ${document.getElementById('timer-display').textContent}`
+            );
+
+            // Test 5: Check if timer state updated correctly
+            addResult(
+                'Timer state updated to 10 minutes',
+                timerState.customDuration === 10 && timerState.totalSeconds === 600,
+                `customDuration=${timerState.customDuration}, totalSeconds=${timerState.totalSeconds}`
+            );
+
+            // Test 6: Test setTimerDuration with invalid duration
+            const result2 = setTimerDuration(99);
+            addResult(
+                'setTimerDuration(99) returns false for invalid duration',
+                result2 === false,
+                `Returned ${result2}`
+            );
+
+            // Test 7: Test duration persistence
+            saveDurationPreference(15);
+            const loaded = loadDurationPreference();
+            addResult(
+                'Duration preference persists to localStorage',
+                loaded === 15,
+                `Saved 15, loaded ${loaded}`
+            );
+
+            // Test 8: Test reset uses custom duration
+            setTimerDuration(5);
+            timerState.remainingSeconds = 100; // Simulate some time passing
+            resetTimer();
+            addResult(
+                'resetTimer() uses customDuration',
+                timerState.remainingSeconds === 300,
+                `After reset, remainingSeconds = ${timerState.remainingSeconds} (expected 300 for 5 min)`
+            );
+
+            // Test 9: Check duration select is disabled when timer starts
+            setTimerDuration(1);
+            startTimer();
+            const disabledWhenRunning = durationSelect.disabled;
+            stopTimer();
+            const enabledWhenStopped = !durationSelect.disabled;
+            addResult(
+                'Duration select disabled when timer running',
+                disabledWhenRunning && enabledWhenStopped,
+                `Disabled when running: ${disabledWhenRunning}, Enabled when stopped: ${enabledWhenStopped}`
+            );
+
+            // Clean up localStorage
+            localStorage.removeItem('productivity_timer_duration');
+        });
+    </script>
+</body>
+</html>

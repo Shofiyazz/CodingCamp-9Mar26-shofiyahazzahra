@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Greeting Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .result {
+            font-weight: bold;
+            color: #2c5282;
+        }
+    </style>
+</head>
+<body>
+    <h1>Time Greeting Component Test</h1>
+    
+    <div class="test-section">
+        <h2>Live Display</h2>
+        <div id="greeting-display" class="result"></div>
+        <div id="time-display" class="result"></div>
+        <div id="date-display" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Function Tests</h2>
+        <div id="test-results"></div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Run manual tests
+        const testResults = document.getElementById('test-results');
+        
+        function addTestResult(name, result, expected) {
+            const div = document.createElement('div');
+            const pass = result === expected;
+            div.innerHTML = `<strong>${name}:</strong> ${pass ? '✓ PASS' : '✗ FAIL'}<br>
+                            Expected: ${expected}<br>
+                            Got: ${result}<br><br>`;
+            div.style.color = pass ? 'green' : 'red';
+            testResults.appendChild(div);
+        }
+        
+        // Test formatTime
+        const testDate1 = new Date('2024-01-15T15:45:00');
+        addTestResult('formatTime (3:45 PM)', formatTime(testDate1), '3:45 PM');
+        
+        const testDate2 = new Date('2024-01-15T09:05:00');
+        addTestResult('formatTime (9:05 AM)', formatTime(testDate2), '9:05 AM');
+        
+        const testDate3 = new Date('2024-01-15T00:00:00');
+        addTestResult('formatTime (12:00 AM)', formatTime(testDate3), '12:00 AM');
+        
+        const testDate4 = new Date('2024-01-15T12:00:00');
+        addTestResult('formatTime (12:00 PM)', formatTime(testDate4), '12:00 PM');
+        
+        // Test getGreeting
+        addTestResult('getGreeting (8 AM)', getGreeting(8), 'Good morning');
+        addTestResult('getGreeting (2 PM)', getGreeting(14), 'Good afternoon');
+        addTestResult('getGreeting (6 PM)', getGreeting(18), 'Good evening');
+        addTestResult('getGreeting (11 PM)', getGreeting(23), 'Good night');
+        addTestResult('getGreeting (2 AM)', getGreeting(2), 'Good night');
+        
+        // Test formatDate
+        const dateResult = formatDate(new Date('2024-01-15'));
+        const datePass = dateResult.includes('January') && dateResult.includes('15') && dateResult.includes('2024');
+        const dateDiv = document.createElement('div');
+        dateDiv.innerHTML = `<strong>formatDate:</strong> ${datePass ? '✓ PASS' : '✗ FAIL'}<br>
+                            Got: ${dateResult}<br><br>`;
+        dateDiv.style.color = datePass ? 'green' : 'red';
+        testResults.appendChild(dateDiv);
+        
+        // Initialize the time greeting component
+        initTimeGreeting();
+        
+        console.log('Time Greeting Component initialized and tests completed');
+    </script>
+</body>
+</html>

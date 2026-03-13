@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List UI Layer Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+        }
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        .task-text {
+            flex: 1;
+            cursor: pointer;
+        }
+        .task-text:hover {
+            background-color: #f0f0f0;
+        }
+        .task-edit-input {
+            flex: 1;
+            padding: 5px;
+            font-size: 14px;
+        }
+        .error-message {
+            color: red;
+            padding: 10px;
+            background-color: #fee;
+            border: 1px solid red;
+            margin: 10px 0;
+        }
+        .empty-message {
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+        }
+        .task-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #task-input {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+        }
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+        #task-list {
+            list-style: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Task List UI Layer Test</h1>
+    
+    <div class="task-input-container">
+        <input type="text" id="task-input" placeholder="Enter a new task...">
+        <button id="task-add-btn">Add Task</button>
+    </div>
+    
+    <ul id="task-list"></ul>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Initialize the task list component
+        initTaskList();
+        
+        console.log('Task List UI initialized');
+        console.log('Current tasks:', tasks);
+    </script>
+</body>
+</html>

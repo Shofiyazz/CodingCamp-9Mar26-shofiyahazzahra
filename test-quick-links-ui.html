@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Links UI Layer Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+        }
+        .link-name {
+            flex: 1;
+            cursor: pointer;
+            color: #0066cc;
+        }
+        .link-name:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            color: red;
+            padding: 10px;
+            background-color: #fee;
+            border: 1px solid red;
+            margin: 10px 0;
+        }
+        .empty-message {
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+        }
+        .link-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #link-name-input, #link-url-input {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+        }
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+        #link-list {
+            list-style: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quick Links UI Layer Test</h1>
+    
+    <div class="link-input-container">
+        <input type="text" id="link-name-input" placeholder="Link name...">
+        <input type="text" id="link-url-input" placeholder="URL (https://...)">
+        <button id="link-add-btn">Add Link</button>
+    </div>
+    
+    <ul id="link-list"></ul>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Initialize the quick links component
+        initQuickLinks();
+        
+        console.log('Quick Links UI initialized');
+        console.log('Current links:', links);
+    </script>
+</body>
+</html>

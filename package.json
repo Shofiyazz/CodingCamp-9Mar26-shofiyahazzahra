@@ -1,0 +1,19 @@
+{
+  "name": "productivity-dashboard",
+  "version": "1.0.0",
+  "description": "A lightweight productivity dashboard with time tracking, task management, and quick links",
+  "main": "js/app.js",
+  "scripts": {
+    "test": "vitest --run",
+    "test:watch": "vitest"
+  },
+  "keywords": ["productivity", "dashboard", "timer", "tasks"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "vitest": "^1.0.0",
+    "jsdom": "^23.0.0",
+    "fast-check": "^3.15.0",
+    "@vitest/ui": "^1.0.0"
+  }
+}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        #timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Focus Timer Test</h1>
+    <div id="timer-display">25:00</div>
+    <div class="timer-controls">
+        <button id="timer-start">Start</button>
+        <button id="timer-stop">Stop</button>
+        <button id="timer-reset">Reset</button>
+    </div>
+
+    <script>
+        // Timer state
+        const timerState = {
+            totalSeconds: 1500,
+            remainingSeconds: 1500,
+            isRunning: false,
+            intervalId: null
+        };
+
+        function formatTimerDisplay(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+            const secsStr = secs < 10 ? '0' + secs : secs;
+            return `${minutesStr}:${secsStr}`;
+        }
+
+        const timerDisplay = document.getElementById('timer-display');
+
+        function updateTimerDisplay() {
+            if (timerDisplay) {
+                timerDisplay.textContent = formatTimerDisplay(timerState.remainingSeconds);
+            }
+        }
+
+        function notifyTimerComplete() {
+            alert('Focus session complete!');
+        }
+
+        function startTimer() {
+            if (timerState.isRunning) {
+                return;
+            }
+            timerState.isRunning = true;
+            timerState.intervalId = setInterval(() => {
+                if (timerState.remainingSeconds > 0) {
+                    timerState.remainingSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    stopTimer();
+                    notifyTimerComplete();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerState.intervalId !== null) {
+                clearInterval(timerState.intervalId);
+                timerState.intervalId = null;
+            }
+            timerState.isRunning = false;
+        }
+
+        function resetTimer() {
+            stopTimer();
+            timerState.remainingSeconds = timerState.totalSeconds;
+            updateTimerDisplay();
+        }
+
+        // Initialize
+        document.getElementById('timer-start').addEventListener('click', startTimer);
+        document.getElementById('timer-stop').addEventListener('click', stopTimer);
+        document.getElementById('timer-reset').addEventListener('click', resetTimer);
+        updateTimerDisplay();
+    </script>
+</body>
+</html>
